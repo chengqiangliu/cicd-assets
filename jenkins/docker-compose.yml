@@ -1,0 +1,18 @@
+version: "3"
+services:
+  jenkins:
+    container_name: jenkins
+    privileged: true
+    image: jenkins/jenkins:lts
+    user: root
+    networks:
+      - shinjuku
+    ports:
+      - "9031:8080"
+    volumes:
+      - /opt/jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  shinjuku:
+    name: shinjuku

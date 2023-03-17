@@ -1,0 +1,12 @@
+---
+- name: Stop Jenkins using Docker Compose
+  hosts: local
+  gather_facts: no
+ 
+  tasks:
+    - name: Stop Docker Compose stack
+      community.docker.docker_compose:
+        project_src: /opt/jenkins
+        state: absent
+        files:
+          - docker-compose.yml

@@ -1,0 +1,24 @@
+---
+- name: Uninstall Docker
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Uninstall Docker on Ubuntu or Debian
+      package:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+      when: ansible_distribution in ['Debian', 'Ubuntu']
+
+    - name: Uninstall Docker on macOS
+      homebrew:
+        name: docker
+        state: absent
+      when: ansible_distribution == 'MacOSX'
+      vars:
+        homebrew_packages:
+          - docker
+
