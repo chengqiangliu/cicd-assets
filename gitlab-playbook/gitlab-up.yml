@@ -1,0 +1,20 @@
+- name: Set up Gitlab using Docker Compose
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Deploy Docker Compose stack
+      community.docker.docker_compose:
+        project_src: ~/workspace/gitlab
+        files:
+          - docker-compose.yml
+          
+    - name: Retrieve Gitlab initial admin password
+      become: yes
+      shell: |
+       docker exec -it gitlab-ce grep 'Password:' /etc/gitlab/initial_root_password
+      register: initial_password
+
+    - name: Print Gitlab initial admin password
+      debug:
+        var: initial_password.stdout
+
