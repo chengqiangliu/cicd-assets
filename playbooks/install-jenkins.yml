@@ -5,33 +5,33 @@
   become: true
  
   tasks:
-    - name: Create /opt and /opt/jenkins directories if they do not exist
+    - name: Create /opt/services/jenkins directories if they do not exist
       become: yes
       file:
         path: "{{ item }}"
         state: directory
       loop:
-        - /opt
-        - /opt/jenkins
+        - /opt/services
+        - /opt/services/jenkins
 
     - name: Copy Docker Compose file to remote server
       copy:
         src: ../jenkins/docker-compose.yml
-        dest: /opt/jenkins/docker-compose.yml
+        dest: /opt/services/jenkins/docker-compose.yml
 
     - name: Docker compose up
       community.docker.docker_compose:
-        project_src: /opt/jenkins
+        project_src: /opt/services/jenkins
         files:
           - docker-compose.yml
 
- #   - name: Retrieve Jenkins initial admin password
- #     become: yes
- #     shell: |
- #       docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
- #     register: initial_admin_password
+#    - name: Retrieve Jenkins initial admin password
+#      become: yes
+#      shell: |
+#        docker exec jenkins cat /opt/services/jenkins_home/secrets/initialAdminPassword
+#      register: initial_admin_password
 
- #   - name: Print Jenkins initial admin password
- #     debug:
- #       var: initial_admin_password.stdout
+#    - name: Print Jenkins initial admin password
+#      debug:
+#        var: initial_admin_password.stdout
  

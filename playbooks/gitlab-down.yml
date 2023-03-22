@@ -1,20 +1,20 @@
----
-- name: Stop Jenkins using Docker Compose
+- name: Stop Gitlab using Docker Compose
   hosts: local
   gather_facts: no
- 
   tasks:
-    - name: Stop Docker Compose stack
+    - name: Stop gitlab container
       community.docker.docker_compose:
-        project_src: /opt/services/jenkins
+        project_src: /opt/services/gitlab
         state: absent
         files:
           - docker-compose.yml
-
-    - name: Delete /opt/services/jenkins directories 
+    
+    - name: Delete /opt/services/gitlab 
       become: yes
       file:
         path: "{{ item }}"
         state: absent
       loop:
-        - /opt/services/jenkins
+        - /opt/services/gitlab
+
+

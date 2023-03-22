@@ -10,12 +10,13 @@ services:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://localhost'
     ports:
-      - '8082:80'
+      - '8090:80'
       - '8443:443'
+    user: root
     volumes:
-      - '$GITLAB_HOME/config:/etc/gitlab'
-      - '$GITLAB_HOME/logs:/var/log/gitlab'
-      - '$GITLAB_HOME/data:/var/opt/gitlab'
+      - /opt/services/gitlab_home/config:/etc/gitlab
+      - /opt/services/gitlab_home/logs:/var/log/gitlab
+      - /opt/services/gitlab_home/data:/var/opt/gitlab
     networks:
       - gitlab
   gitlab-runner:
@@ -24,9 +25,10 @@ services:
     restart: always
     depends_on:
       - web
+    user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - '$GITLAB_HOME/gitlab-runner:/etc/gitlab-runner'
+      - /opt/services/gitlab_home/gitlab-runner:/etc/gitlab-runner
     networks:
       - gitlab
 

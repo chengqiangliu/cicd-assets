@@ -1,0 +1,16 @@
+version: "3"
+services:
+  artifactory-oss:
+
+    container_name: artifactory-oss
+
+    image: docker.bintray.io/jfrog/artifactory-oss:latest
+
+    user: root
+    ports:
+      - 8081:8081
+      - 8082:8082
+
+    volumes:
+      - /opt/services/artifactory_home:/var/artifactory_home
+      - /var/run/docker.sock:/var/run/docker.sock
