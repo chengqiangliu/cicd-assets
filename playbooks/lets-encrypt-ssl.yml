@@ -1,0 +1,45 @@
+- hosts: local
+  become: yes
+  vars:
+    domain_name: 192.168.11.8.nip.io
+    email: bathlaanjali09@gmail.com
+  tasks:
+    - name: Install Let's Encrypt client
+      apt:
+        name: certbot
+        state: present
+    
+    - name: Create directory
+      become: yes
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /var
+        - /var/www
+        - /var/www/html
+
+    - name: Generate SSL certificates using Let's Encrypt
+      become: yes
+      command: certbot certonly --webroot -w /var/www/html -d "{{ domain_name }}" --agree-tos --email "{{ email }}" --non-interactive
+      args:
+        creates: "/etc/letsencrypt/live/{{ domain_name }}"
+
+    - name: Copy SSL certificates to Nginx directory
+      copy:
+        src: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+        dest: "/etc/nginx/ssl/{{ domain_name }}/fullchain.pem"
+      notify: restart nginx
+
+    - name: Copy SSL certificates to Nginx directory
+      copy:
+        src: "/etc/letsencrypt/live/{{ domain_name }}/privkey.pem"
+        dest: "/etc/nginx/ssl/{{ domain_name }}/privkey.pem"
+      notify: restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted

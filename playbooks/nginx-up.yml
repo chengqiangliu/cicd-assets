@@ -1,5 +1,4 @@
----
-- name: Install and start Jenkins and Nginx containers with SSL
+- name: Install and start Nginx containers
   hosts: local
   gather_facts: false
 
@@ -14,33 +13,24 @@
         - /opt/services
         - /opt/services/nginx
         - /opt/services/nginx/www
-        - /etc/ssl/certs
-        - /etc/ssl/private
-
-    - name: Generate SSL certificate and private key
-      openssl_privatekey:
-        path: /etc/ssl/private/server.key
-        mode: 0600
-      notify:
-        - Generate SSL certificate
-    - name: Generate SSL certificate
-      openssl_certificate:
-        path: /etc/ssl/certs/server.crt
-        privatekey_path: /etc/ssl/private/server.key
-        common_name: jenkins.example.com
-        mode: 0644
+#        - /opt/services/nginx/ssl
+#        - /opt/services/nginx/ssl/certs     
+#        - /etc/nginx/certs         
 
     - name: Copy Nginx config file to remote server
+      become: yes
       copy:
-        src: ../nginx/nginx.conf
+        src: ../nginx_gateway/nginx.conf
         dest: /opt/services/nginx/nginx.conf
 
     - name: Copy Docker Compose file to remote server
+      become: yes
       copy:
-        src: ../nginx/docker-compose.yml
+        src: ../nginx_gateway/docker-compose.yml
         dest: /opt/services/nginx/docker-compose.yml
 
-    - name: Start Jenkins and Nginx containers
+    - name: Start Nginx containers
+      become: yes
       community.docker.docker_compose:
         project_src: /opt/services/nginx
         files:
