@@ -29,13 +29,4 @@
         files:
           - docker-compose.yml
           
-#    - name: Retrieve Gitlab initial admin password
-#      become: yes
-#      shell: |
-#       docker exec -it gitlab-ce grep 'Password:' /etc/gitlab/initial_root_password
-#      register: initial_password
-
-#    - name: Print Gitlab initial admin password
-#      debug:
-#        var: initial_password.stdout
 

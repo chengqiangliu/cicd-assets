@@ -9,7 +9,10 @@ services:
       - shinjuku
     ports:
       - "9031:8080"
-      - "8445:8443"
+#    environment:
+#      - JENKINS_OPTS="--prefix=/jenkins"
+#      - JENKINS_ARGS="--prefix=/jenkins"
+#      - TZ=Asia/Tokyo
     volumes:
       - /opt/services/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
