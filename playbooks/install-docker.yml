@@ -1,6 +1,6 @@
 ---
 - name: Install Docker
-  hosts: localho
+  hosts: local
   become: true
   vars:
     docker_apt_repo_key_url: https://download.docker.com/linux/ubuntu/gpg
