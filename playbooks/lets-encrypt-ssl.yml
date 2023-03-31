@@ -1,12 +1,17 @@
 - hosts: local
   become: yes
   vars:
-    domain_name: 192.168.11.8.nip.io
-    email: bathlaanjali09@gmail.com
+    domain_name: 74.235.186.81
+    email: karan.takalkar@accenture.com
   tasks:
     - name: Install Let's Encrypt client
       apt:
         name: certbot
+        state: present
+    
+    - name: Install Let's Encrypt client
+      apt:
+        name: python3-certbot-nginx
         state: present
     
     - name: Create directory
@@ -26,17 +31,17 @@
       args:
         creates: "/etc/letsencrypt/live/{{ domain_name }}"
 
-    - name: Copy SSL certificates to Nginx directory
-      copy:
-        src: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
-        dest: "/etc/nginx/ssl/{{ domain_name }}/fullchain.pem"
-      notify: restart nginx
+#    - name: Copy SSL certificates to Nginx directory
+#      copy:
+#        src: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+#        dest: "/opt/services/nginx/certs/{{ domain_name }}/fullchain.pem"
+#      notify: restart nginx
 
-    - name: Copy SSL certificates to Nginx directory
-      copy:
-        src: "/etc/letsencrypt/live/{{ domain_name }}/privkey.pem"
-        dest: "/etc/nginx/ssl/{{ domain_name }}/privkey.pem"
-      notify: restart nginx
+#    - name: Copy SSL certificates to Nginx directory
+#      copy:
+#        src: "/etc/letsencrypt/live/{{ domain_name }}/privkey.pem"
+#        dest: "/opt/services/nginx/certs/{{ domain_name }}/privkey.pem"
+#      notify: restart nginx
 
   handlers:
     - name: restart nginx

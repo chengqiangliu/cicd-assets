@@ -24,6 +24,7 @@
         dest: /opt/services/gitlab/docker-compose.yml
 
     - name: Start gitlab container
+      become: true
       community.docker.docker_compose:
         project_src: /opt/services/gitlab
         files:

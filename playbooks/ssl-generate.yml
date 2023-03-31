@@ -1,5 +1,5 @@
 - name: Generate SSL key and certificate
-  hosts: localhost
+  hosts: local
   become: true
 
   tasks:
