@@ -1,0 +1,24 @@
+version: "3"
+services:
+  artifactory-oss:
+    container_name: artifactory
+    hostname: artifactory
+    image: docker.bintray.io/jfrog/artifactory-oss:latest
+    ports:
+      - 8081:8081
+      - 8082:8082
+    environment:
+      - ARTIFACTORY_HOME=/var/opt/jfrog/artifactory
+      - ARTIFACTORY_PID=/var/opt/jfrog/artifactory.pid
+      - ARTIFACTORY_FORCE_BASE_URL=http://cicd-demo-v1.eastus.cloudapp.azure.com:8082/artifactory
+      - JAVA_OPTIONS=-Dartifactory.context.path=/artifactory
+    volumes:
+      - /opt/services/artifactory_home:/var/artifactory_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - shinjuku
+
+networks:
+  shinjuku:
+    name: shinjuku

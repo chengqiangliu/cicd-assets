@@ -1,36 +1,36 @@
 - name: Install and start Nginx containers
-  hosts: local
+  hosts: azure_vms
   gather_facts: false
+  become: true
 
   tasks:
     - name: Create directory for Nginx config and content
-      become: yes
       file:
         path: "{{ item }}"
         state: directory
         mode: '0755'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       loop:
         - /opt/services
         - /opt/services/nginx
-        - /opt/services/nginx/www
-#        - /opt/services/nginx/ssl
-#        - /opt/services/nginx/ssl/certs     
-#        - /etc/nginx/certs         
+        - /opt/services/nginx/config 
+        - /etc/nginx   
 
     - name: Copy Nginx config file to remote server
-      become: yes
       copy:
-        src: ../nginx_gateway/nginx.conf
-        dest: /opt/services/nginx/nginx.conf
+        src: ./services/nginx/config/default.conf
+        dest: /opt/services/nginx/config/default.conf
+        mode: '0644'
+    
 
     - name: Copy Docker Compose file to remote server
-      become: yes
       copy:
-        src: ../nginx_gateway/docker-compose.yml
+        src: ./services/nginx/docker-compose.yml
         dest: /opt/services/nginx/docker-compose.yml
+        mode: '0644'
 
     - name: Start Nginx containers
-      become: yes
       community.docker.docker_compose:
         project_src: /opt/services/nginx
         files:

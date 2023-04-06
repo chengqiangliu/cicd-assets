@@ -1,6 +1,6 @@
 ---
 - name: Install Docker
-  hosts: local
+  hosts: azure_vms
   become: true
   vars:
     docker_apt_repo_key_url: https://download.docker.com/linux/ubuntu/gpg

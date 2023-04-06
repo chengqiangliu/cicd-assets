@@ -1,5 +1,5 @@
 - name: Stop Nginx containers
-  hosts: local
+  hosts: azure_vms
   gather_facts: false
 
   tasks:

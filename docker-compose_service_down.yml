@@ -1,0 +1,41 @@
+---
+- name: Stop Services using Docker Compose
+  hosts: azure_vms
+  gather_facts: no
+  become: true
+ 
+  tasks:
+
+    - name: Docker compose down
+      community.docker.docker_compose:
+        project_src: "/opt/services/{{ service_name }}"
+        state: absent
+        files:
+          - docker-compose.yml
+
+    - name: Delete directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop:
+        - /opt/services/jenkins
+      when:
+        - service_name == "jenkins"
+    
+    - name: Delete directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop:
+        - /opt/services/gitlab
+      when:
+        - service_name == "gitlab"
+
+
+ 

@@ -1,21 +1,18 @@
-- hosts: local
+- hosts: azure_vms
   become: yes
   vars:
-    domain_name: 74.235.186.81
+    domain_name: cicd-demo-v1.eastus.cloudapp.azure.com
     email: karan.takalkar@accenture.com
   tasks:
     - name: Install Let's Encrypt client
       apt:
-        name: certbot
+        name: "{{ item }}"
         state: present
-    
-    - name: Install Let's Encrypt client
-      apt:
-        name: python3-certbot-nginx
-        state: present
+      loop:
+        - certbot
+        - python3-certbot-nginx
     
     - name: Create directory
-      become: yes
       file:
         path: "{{ item }}"
         state: directory
@@ -24,24 +21,21 @@
         - /var
         - /var/www
         - /var/www/html
+        - /etc/nginx
+        - /etc/nginx/certs
 
     - name: Generate SSL certificates using Let's Encrypt
       become: yes
-      command: certbot certonly --webroot -w /var/www/html -d "{{ domain_name }}" --agree-tos --email "{{ email }}" --non-interactive
+      command: certbot certonly --nginx -d "{{ domain_name }}" --agree-tos --email "{{ email }}" --non-interactive --redirect --hsts --uir
       args:
         creates: "/etc/letsencrypt/live/{{ domain_name }}"
 
-#    - name: Copy SSL certificates to Nginx directory
-#      copy:
-#        src: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
-#        dest: "/opt/services/nginx/certs/{{ domain_name }}/fullchain.pem"
-#      notify: restart nginx
+    # - name: Copy SSL certificates to directory
+    #   copy:
+    #     src: "/etc/letsencrypt/live/{{ domain_name }}"
+    #     dest: "/etc/nginx/certs/"
+    #     remote_src: yes
 
-#    - name: Copy SSL certificates to Nginx directory
-#      copy:
-#        src: "/etc/letsencrypt/live/{{ domain_name }}/privkey.pem"
-#        dest: "/opt/services/nginx/certs/{{ domain_name }}/privkey.pem"
-#      notify: restart nginx
 
   handlers:
     - name: restart nginx

@@ -1,0 +1,36 @@
+# docker-compose.yml
+version: '3.7'
+services:
+  web:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: gitlab
+    container_name: gitlab-ce
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://cicd-demo-v1.eastus.cloudapp.azure.com'
+    ports:
+      - '8090:80'
+      - '8443:443'
+    volumes:
+      - /opt/services/gitlab_home/config:/etc/gitlab
+      - /opt/services/gitlab_home/logs:/var/log/gitlab
+      - /opt/services/gitlab_home/data:/var/opt/gitlab
+    networks:
+      - shinjuku
+
+  # gitlab-runner:
+  #   image: gitlab/gitlab-runner:alpine
+  #   container_name: gitlab-runner    
+  #   restart: always
+  #   depends_on:
+  #     - web
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /opt/services/gitlab_home/gitlab-runner:/etc/gitlab-runner
+  #   networks:
+  #     - shinjuku
+
+networks:
+  shinjuku:
+    name: shinjuku

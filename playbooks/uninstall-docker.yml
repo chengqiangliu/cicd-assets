@@ -1,6 +1,6 @@
 ---
 - name: Uninstall Docker
-  hosts: localhost
+  hosts: azure_vms
   become: true
   tasks:
     - name: Uninstall Docker on Ubuntu or Debian
