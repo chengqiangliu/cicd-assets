@@ -65,7 +65,7 @@
 
     - name: Copy Docker Compose file to remote server
       copy:
-        src: "./services/{{ service_name }}/docker-compose.yml"
+        src: "/home/cicd/workspace/cicd-assets/services/{{ service_name }}/docker-compose.yml"
         dest: "/opt/services/{{ service_name }}/docker-compose.yml"
         mode: '0644'
 
