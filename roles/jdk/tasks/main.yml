@@ -1,0 +1,34 @@
+- name: Create JDK installation directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /opt
+    - /opt/services
+    - /opt/services/jdk
+
+- name: Download Oracle JDK binary
+  get_url:
+    url: "https://download.oracle.com/java/{{ jdk_version }}/latest/jdk-{{ jdk_version }}_linux-x64_bin.deb"
+    dest: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb"
+    mode: 0644
+
+- name: Install Oracle JDK
+  apt:
+    deb: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb"
+
+- name: Set JAVA_HOME environment variable
+  lineinfile:
+    dest: /etc/environment
+    regexp: '^JAVA_HOME='
+    line: 'JAVA_HOME="/opt/services/jdk/jdk{{ jdk_version }}/"'
+    state: present
+    create: yes
+
+- name: Add JDK bin directory to PATH
+  lineinfile:
+    dest: ~/.bashrc
+    regexp: '^export PATH=\$PATH:/opt/services/jdk/jdk{{ jdk_version }}/bin$'
+    line: 'export PATH=$PATH:/opt/services/jdk/jdk{{ jdk_version }}/bin'
+    state: present
+    create: yes
