@@ -6,29 +6,46 @@
     - /opt
     - /opt/services
     - /opt/services/jdk
+    - /opt/services/jdk/java
 
 - name: Download Oracle JDK binary
   get_url:
-    url: "https://download.oracle.com/java/{{ jdk_version }}/latest/jdk-{{ jdk_version }}_linux-x64_bin.deb"
-    dest: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb"
-    mode: 0644
+    url: "https://download.oracle.com/java/{{ jdk_version }}/latest/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
+    dest: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
+    #mode: 0644
 
-- name: Install Oracle JDK
-  apt:
-    deb: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb"
+- name: Extract Java archive
+  unarchive:
+    src: /opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz
+    dest: /opt/services/jdk/java
+    remote_src: yes
+
+#- name: Install Oracle JDK
+  #apt:
+  #  deb: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb"
+  # command: dpkg -i /opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb
 
 - name: Set JAVA_HOME environment variable
   lineinfile:
     dest: /etc/environment
-    regexp: '^JAVA_HOME='
-    line: 'JAVA_HOME="/opt/services/jdk/jdk{{ jdk_version }}/"'
+    line: 'JAVA_HOME=/opt/services/jdk/java/jdk-{{ jdk_major_version }}/'
     state: present
-    create: yes
+    
+- name: Set Java executable path
+  lineinfile:
+    dest: /etc/profile
+    line: 'export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin'
+    state: present
+
 
 - name: Add JDK bin directory to PATH
   lineinfile:
     dest: ~/.bashrc
-    regexp: '^export PATH=\$PATH:/opt/services/jdk/jdk{{ jdk_version }}/bin$'
-    line: 'export PATH=$PATH:/opt/services/jdk/jdk{{ jdk_version }}/bin'
+    regexp: '^export PATH=\$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin$'
+    line: 'export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin'
     state: present
     create: yes
+
+
+- name: Reload environment variables
+  shell: export JAVA_HOME=/opt/services/jdk/java/jdk-{{ jdk_major_version }} && export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin

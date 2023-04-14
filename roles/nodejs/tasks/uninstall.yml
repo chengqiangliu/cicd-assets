@@ -1,0 +1,6 @@
+- name: Remove NodeJS
+  expect:
+    command: sudo apt-get remove nodejs
+    responses:
+      'Do you want to continue?' : 'Y'
+ 

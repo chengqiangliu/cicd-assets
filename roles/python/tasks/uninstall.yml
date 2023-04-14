@@ -1,0 +1,6 @@
+- name: Remove python3
+  expect:
+    command: sudo apt-get remove python3
+    responses:
+      'Do you want to continue?' : 'Y'
+ 

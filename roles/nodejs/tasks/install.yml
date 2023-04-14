@@ -1,0 +1,5 @@
+- name: Update latest packages
+  shell: sudo apt-get update
+- name: Install NodeJS
+  shell: sudo apt install nodejs
+ 

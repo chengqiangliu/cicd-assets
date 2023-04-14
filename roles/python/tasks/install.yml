@@ -1,0 +1,5 @@
+- name: Update latest packages
+  shell: sudo apt-get update
+- name: Install Python3
+  shell: sudo apt-get install python3
+ 
