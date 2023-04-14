@@ -12,18 +12,13 @@
   get_url:
     url: "https://download.oracle.com/java/{{ jdk_version }}/latest/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
     dest: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
-    #mode: 0644
+
 
 - name: Extract Java archive
   unarchive:
     src: /opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz
     dest: /opt/services/jdk/java
     remote_src: yes
-
-#- name: Install Oracle JDK
-  #apt:
-  #  deb: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb"
-  # command: dpkg -i /opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.deb
 
 - name: Set JAVA_HOME environment variable
   lineinfile:
@@ -38,13 +33,13 @@
     state: present
 
 
-- name: Add JDK bin directory to PATH
-  lineinfile:
-    dest: ~/.bashrc
-    regexp: '^export PATH=\$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin$'
-    line: 'export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin'
-    state: present
-    create: yes
+# - name: Add JDK bin directory to PATH
+#   lineinfile:
+#     dest: ~/.bashrc
+#     regexp: '^export PATH=\$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin$'
+#     line: 'export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin'
+#     state: present
+#     create: yes
 
 
 - name: Reload environment variables
