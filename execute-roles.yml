@@ -1,5 +1,5 @@
 - name: Install {{ role_name }}
-  hosts: azure_vms
+  hosts: local
   become: yes
   roles:
     - role: "{{ role_name }}"

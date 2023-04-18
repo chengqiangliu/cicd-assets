@@ -1,0 +1,7 @@
+---
+- name: Stop MySQL service
+  shell: sudo service mysql stop
+
+- name: Uninstall MySQL
+  shell: sudo apt-get remove --purge mysql-server mysql-client mysql-common -y
+

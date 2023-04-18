@@ -1,0 +1,14 @@
+---
+- name: Install MySQL
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - mysql-server 
+    - mysql-client
+    - mysql-common
+
+- name: Start MySQL service
+  shell: sudo service mysql start
+
+
