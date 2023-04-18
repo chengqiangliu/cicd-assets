@@ -1,3 +1,0 @@
-- hosts: azure_vms
-  roles:
-    - nodejs
