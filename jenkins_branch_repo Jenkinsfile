@@ -1,0 +1,96 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Parameters'){
+            steps {
+                script {
+                properties([
+                        parameters([
+                            [$class: 'ChoiceParameter', 
+                                    choiceType: 'PT_SINGLE_SELECT', 
+                                    description: 'Select the Repository from the Dropdown List', 
+                                    filterLength: 1, 
+                                    filterable: false, 
+                                    name: 'repository', 
+                                    script: [
+                                        $class: 'GroovyScript', 
+                                        fallbackScript: [
+                                            classpath: [], 
+                                            sandbox: false, 
+                                            script: "return['Could not get repositories for the user']"
+                                        ], 
+                                        script: [
+                                            classpath: [], 
+                                            sandbox: false, 
+                                            script: 
+                                                ''' import groovy.json.JsonSlurper;
+                                                    try{
+                                                       List<String>params = new ArrayList<String>()
+                                                       URL apiUrl = "https://api.github.com/users/chengqiangliu/repos".toURL()
+                                                       List branches = new JsonSlurper().parse(apiUrl.newReader())
+                                                       for (branch in branches ) { 
+                                                         params.add(branch.name) 
+                                                       }
+                                                       return params
+                                                    }
+                                                    catch(IOException ex){
+                                                       print ex
+                                                    } '''
+                                        ]
+                                    ]
+                                ],
+                                [$class: 'CascadeChoiceParameter', 
+                                    choiceType: 'PT_SINGLE_SELECT', 
+                                    description: '',
+                                    name: 'branch', 
+                                    referencedParameters: 'repository', 
+                                    script: 
+                                        [$class: 'GroovyScript', 
+                                        fallbackScript: [
+                                                classpath: [], 
+                                                sandbox: false, 
+                                                script: "return['Could not get branches from repo Param']"
+                                                ], 
+                                        script: [
+                                                classpath: [], 
+                                                sandbox: false, 
+                                                script: '''
+                                                import groovy.json.JsonSlurper;
+                                                try{
+                                                   List<String>params = new ArrayList<String>()
+                                                   URL apiUrl = "https://api.github.com/repos/chengqiangliu/$repository/branches".toURL()
+                                                   List json = new JsonSlurper().parse(apiUrl.newReader())
+                                                   for (repo in json ) { 
+                                                   params.add(repo.name) 
+                                                  }
+                                                return params
+                                                }
+                                                catch(IOException ex){
+                                                   print ex
+                                                }
+                                                '''
+                                            ] 
+                                    ]
+                                ],
+                            
+                        ])
+                    ])
+                }
+            }
+        }
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: params.branch]], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [[$class: 'CleanCheckout']], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: "https://github.com/chengqiangliu/${params.repository}"]]
+                ])
+            }
+        }
+    }
+    
+}
