@@ -1,0 +1,8 @@
+- name: Stop mysql service
+  shell: sudo systemctl stop mysql
+- name: Remove mysql-server
+  expect:
+    command: sudo apt purge mysql-server*
+    responses:
+      'Do you want to continue?' : 'Y'
+ 

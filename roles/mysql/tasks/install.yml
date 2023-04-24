@@ -1,0 +1,8 @@
+- name: Update latest packages
+  shell: sudo apt update
+- name: Install MySQL Server
+  expect:
+    command: sudo apt install mysql-server
+    responses:
+      'Do you want to continue?' : 'Y'
+ 
