@@ -1,2 +1,6 @@
 ---
-mysql_root_password: "cicd@123"
+mysql_root_password: cicd@123
+db_name: my_database
+mysql_user: root
+mysql_master_user: cicd_master
+mysql_master_root_password: cicdmaster@123

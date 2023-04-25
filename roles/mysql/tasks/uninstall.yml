@@ -5,3 +5,8 @@
 - name: Uninstall MySQL
   shell: sudo apt-get remove --purge mysql-server mysql-client mysql-common -y
 
+- name: Delete files
+  shell: sudo rm -rf /etc/mysql /var/lib/mysql /var/log/mysql /var/log/mysql.*
+
+- name: Autoremove
+  shell: sudo apt-get autoremove -y

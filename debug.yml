@@ -1,0 +1,20 @@
+- name: Debug
+  hosts: local
+  gather_facts: true
+  become: true
+  environment:
+    PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+  tasks:
+    - name: output environment variable
+      debug:
+        msg: "{{  ansible_env.PATH }}"
+
+
+    
+
+# if [ -f "$HOME/.zshrc" ]; 
+
+# then
+#   . "$HOME/.bashrc"
+# fi

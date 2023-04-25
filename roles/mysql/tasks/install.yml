@@ -1,14 +1,49 @@
----
-- name: Install MySQL
+- name: Install MySQL and dependencies
   apt:
-    name: "{{ item }}"
+    name:
+      - mysql-server
+      - mysql-client 
+      - python3-mysqldb
+      - libmysqlclient-dev
     state: present
-  loop:
-    - mysql-server 
-    - mysql-client
-    - mysql-common
 
-- name: Start MySQL service
+- name: Start and enable MySQL service
   shell: sudo service mysql start
+
+- name: Create MySQL user 
+  mysql_user:
+    login_user: "{{ mysql_user }}"
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ mysql_master_user }}"
+    password: "{{ mysql_master_root_password }}"
+    priv: "*.*:ALL"
+    host: "%"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: "Copy my.cnf template"
+  template:
+    src: root_cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    mode: 0600
+
+# - name: Create db
+#   mysql_db:
+#     name: "{{ db_name }}"
+#     login_unix_socket: /var/run/mysqld/mysqld.sock
+#     state: present
+
+- name: Enable remote login to MySQL
+  replace:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address\s*=.*$'
+    replace: 'bind-address = 0.0.0.0'
+    backup: yes
+
+- name: Restart MySQL service
+  shell: sudo service mysql restart
+  
+
 
 

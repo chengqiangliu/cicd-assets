@@ -1,0 +1,7 @@
+---
+# defaults file for envpath
+environment_file: ~/.bashrc
+environment_file_2: ~/.bash_profile
+environment_file_3: /etc/profile
+environment_conf: {}
+bash_profile_path: "../../../roles/jdk/tasks/.bash_profile"

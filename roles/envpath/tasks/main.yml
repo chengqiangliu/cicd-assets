@@ -1,0 +1,73 @@
+---
+- name: Check if file exists
+  file:
+    path: "{{ environment_file }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: touch
+  register: result
+  changed_when: result.state != "file"
+
+- name: configure environment
+  lineinfile:
+    dest: "{{ environment_file }}"
+    regexp: "^{{ item.key }}\ ?="
+    line: "export {{ item.key }}={{ item.value }}"
+  with_dict: "{{ environment_conf }}"
+
+- name: Source ~/.bashrc
+  shell: "source {{ environment_file }}"
+  environment:
+    #PATH: "{{ environment_conf.PATH }}:{{ ansible_env.PATH }}"
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  args:
+    _uses_shell: login
+    executable: /bin/bash
+    
+- name: Copy bash_profile
+  copy:
+    src: "{{ bash_profile_path }}"
+    dest: "/home/{{ ansible_user }}/.bash_profile"
+    owner: "{{ ansible_user }}"
+
+- name: Source ~/.bash_profile
+  shell: "source {{ environment_file_2 }}"
+  environment:
+    #PATH: "{{ environment_conf.PATH }}:{{ ansible_env.PATH }}"
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  args:
+    _uses_shell: login 
+    executable: /bin/bash
+    
+- name: configure environment
+  lineinfile:
+    dest: "{{ environment_file_3 }}"
+    regexp: "^{{ item.key }}\ ?="
+    line: "export {{ item.key }}={{ item.value }}"
+  with_dict: "{{ environment_conf }}"
+
+- name: Source ~/.bashrc
+  shell: "source {{ environment_file_3 }}"
+  environment:
+    #PATH: "{{ environment_conf.PATH }}:{{ ansible_env.PATH }}"
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  args:
+    _uses_shell: login
+    executable: /bin/bash
+
+- name: configure environment
+  lineinfile:
+    dest: "{{ environment_file_4 }}"
+    regexp: "^{{ item.key }}\ ?="
+    line: "export {{ item.key }}={{ item.value }}"
+  with_dict: "{{ environment_conf }}"
+
+- name: Source ~/.bashrc
+  shell: "source {{ environment_file_4 }}"
+  environment:
+    #PATH: "{{ environment_conf.PATH }}:{{ ansible_env.PATH }}"
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  args:
+    _uses_shell: login
+    executable: /bin/bash
+    

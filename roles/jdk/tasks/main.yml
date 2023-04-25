@@ -13,34 +13,27 @@
     url: "https://download.oracle.com/java/{{ jdk_version }}/latest/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
     dest: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
 
-
 - name: Extract Java archive
   unarchive:
-    src: /opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz
-    dest: /opt/services/jdk/java
+    src: "/opt/services/jdk/jdk-{{ jdk_version }}_linux-x64_bin.tar.gz"
+    dest: "/opt/services/jdk/java"
     remote_src: yes
-
-- name: Set JAVA_HOME environment variable
-  lineinfile:
-    dest: /etc/environment
-    line: 'JAVA_HOME=/opt/services/jdk/java/jdk-{{ jdk_major_version }}/'
-    state: present
+  
+- name: Set the path
+  include_role:
+    name: envpath
+  vars:
+    environment_conf:
+      JAVA_HOME: "/opt/services/jdk/java/jdk-{{ jdk_major_version }}"
+      PATH: "$JAVA_HOME:$JAVA_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    environment_file: "/home/{{ ansible_user }}/.bashrc"
+    environment_file_2: "/home/{{ ansible_user }}/.bash_profile"
+    environment_file_3: "/etc/profile"
+    environment_file_4: "/etc/environment"
+    bash_profile_path: "../../../roles/jdk/tasks/.bash_profile"
+  
     
-- name: Set Java executable path
-  lineinfile:
-    dest: /etc/profile
-    line: 'export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin'
-    state: present
 
 
-# - name: Add JDK bin directory to PATH
-#   lineinfile:
-#     dest: ~/.bashrc
-#     regexp: '^export PATH=\$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin$'
-#     line: 'export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin'
-#     state: present
-#     create: yes
 
 
-- name: Reload environment variables
-  shell: export JAVA_HOME=/opt/services/jdk/java/jdk-{{ jdk_major_version }} && export PATH=$PATH:/opt/services/jdk/java/jdk-{{ jdk_major_version }}/bin
