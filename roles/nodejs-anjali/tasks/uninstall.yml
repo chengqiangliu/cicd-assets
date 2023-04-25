@@ -1,0 +1,6 @@
+---
+# tasks file for roles/nodejs-anjali
+- name: Uninstall Node.js
+  apt:
+    name: nodejs
+    state: absent

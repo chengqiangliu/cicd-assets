@@ -5,8 +5,9 @@ services:
     image: jenkins/jenkins:lts
     hostname: jenkins
     user: "${UID}:${GID}"
-    networks:
-      - shinjuku
+    # networks:
+    #   - shinjuku
+    network_mode: "host"
     ports:
       - "9031:8080"
     environment:
@@ -15,22 +16,13 @@ services:
       - TZ=Asia/Tokyo
     volumes:
       - /opt/services/jenkins_home:/var/jenkins_home
-      - /etc/localtime:/etc/localtime
+      #- /etc/localtime:/etc/localtime
       - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker
-      - /usr/bin/docker-compose:/usr/local/bin/docker-compose
-      - /usr/lib/jvm:/usr/lib/jvm
-      
-  agent01:
-    container_name: agent01
-    image: jenkins/ssh-agent:latest-bullseye-jdk17
-    networks:
-      - shinjuku
-    ports:
-      - "3333:22"
-    environment:
-      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCxhDCfZO5WUw+Xj53JvxFPLKBZkn6jlZDIgCmzCX1eUxIH/Z1osne0bMVx5+0qleUbpfwejoA7hpYJjOk/a/MfOnEHT6gjeZRfm25Ao0YgWFntSUeXaIY3IaJKivppivVsjPhjc/RgHV3jA5RUzUQ7bG4v6+QBu3pT7IrI6tcZlCaekQ5dTcDLw/Kwv0zneZGUpLy5Xt05PyBaS2SVSRQ+e5IqQE9EhPK5oz0+4z/DdhkpPs1e7IHNVagGrUFaB0GbVgbEj0YfchYHlaMrIP2aK9BOjRa3RNLJuQx8QIdGmFcafyj4gPmTE1zB7ZLB1bDcNjZPgUkWdXNJke4zZis3Bk5QMGTczRurqPBrDlQD9zR8L2yfCsVNErL5vDBx/3NMOoM86/GanK4rEq2eaaI5MW9l6c4Op2nlA99Q0Z2QdX15/Zo8FLCUHLNjDUMNnWRFGV4ssGDXfsfL7F9BDAtN6oJWFXz3pibn42yVbrHNz6om9RqbY29ggMW2F9gW4AE= cicd@demo
+      # - /usr/bin/docker:/usr/bin/docker
+      # - /usr/bin/docker-compose:/usr/local/bin/docker-compose
+      # - /usr/lib/jvm:/usr/lib/jvm
 
+      
 networks:
  shinjuku:
    name: shinjuku

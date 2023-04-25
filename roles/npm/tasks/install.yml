@@ -1,0 +1,11 @@
+---
+# tasks file for roles/nodejs-anjali
+- name: Install prerequisites
+  include_role:
+    name: nodejs-anjali
+    tasks_from: "install.yml"
+
+- name: Install npm
+  apt:
+    name: npm
+    state: present

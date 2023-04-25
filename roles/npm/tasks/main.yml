@@ -1,0 +1,4 @@
+- import_tasks: install.yml
+  when: opt == "install"
+- import_tasks: uninstall.yml
+  when: opt == "uninstall"

@@ -1,0 +1,6 @@
+---
+# tasks file for roles/nodejs-anjali
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
