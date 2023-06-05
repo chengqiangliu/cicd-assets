@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-api
+  namespace: default
+  labels:
+    app: my-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-api
+  template:
+    metadata:
+      labels:
+        app: my-api
+    spec:
+      containers:
+      - name: my-api
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: code
+          mountPath: /var/www/app
+          subPath: my-api
+      volumes:
+      - name: code
+        persistentVolumeClaim:
+          claimName: sources-volume-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-api
+  namespace: default
+  labels:
+    app: my-api
+spec:
+  selector:
+    app: my-api
+  ports:
+  - name: app-port
+    port: 80
+    nodePort: 30101
+  type: NodePort

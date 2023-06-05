@@ -1,0 +1,5 @@
+---
+# tasks file for master-slave
+
+- name: Run build.sh
+  shell: sudo ./roles/master-slave/files/build.sh

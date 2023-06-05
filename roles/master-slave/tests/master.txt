@@ -1,0 +1,6 @@
+docker exec -it mysql_master bash
+mysql -u root -p'111' mydb
+mysql> create table if not exists code(code int);
+# Query OK, 0 rows affected, 1 warning (0.01 sec)
+mysql> insert into code values (100), (200);
+# Query OK, 2 rows affected (0.01 sec)

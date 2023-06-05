@@ -1,6 +1,6 @@
 ---
 - name: Stop Services using Docker Compose
-  hosts: azure_vms
+  hosts: localhost
   gather_facts: no
   become: true
  
