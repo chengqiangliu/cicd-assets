@@ -12,19 +12,23 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 15s
+
     scrape_configs:
       - job_name: 'prometheus'
-        scrape_interval: 5s
         static_configs:
-          - targets: ['localhost:9090'] 
-# 'prometheus-service.prometheus:9090'
+          - targets: ['localhost:9090']
+
+      - job_name: 'node-exporter'
+        static_configs:
+          - targets: ['localhost:9100']
 ---
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: prometheus
   namespace: prometheus
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: prometheus
@@ -35,24 +39,17 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.30.0
-          args:
-            - '--config.file=/etc/prometheus/prometheus.yml'
-            - '--storage.tsdb.path=/prometheus'
-            - '--storage.tsdb.retention.time=15d'
+          image: prom/prometheus:v2.30.3
           ports:
             - containerPort: 9090
           volumeMounts:
-            - name: prometheus-config-volume
-              mountPath: /etc/prometheus
-            - name: prometheus-data-volume
-              mountPath: /prometheus
+            - name: prometheus-config
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
       volumes:
-        - name: prometheus-config-volume
+        - name: prometheus-config
           configMap:
             name: prometheus-config
-        - name: prometheus-data-volume
-          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -60,10 +57,11 @@ metadata:
   name: prometheus-service
   namespace: prometheus
 spec:
-  type: NodePort
-  ports:
-    - name: prometheus
-      port: 9090
-      targetPort: 9090
   selector:
     app: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+  type: ClusterIP
+
