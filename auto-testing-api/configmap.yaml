@@ -4,6 +4,8 @@ metadata:
   name: auto-testing-api-configmap
   namespace: api
 data:
-  DB_HOST: mongo-service
+  DB_HOST: mongo-service.mongo
   DB_PORT: "27017"
+  DB_USER: "root"
+  DB_PASS: "example"
   DB_NAME: "?replicaSet=MainRepSet"
