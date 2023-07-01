@@ -1,0 +1,16 @@
+---
+- name: Apply Auto testing API YAML files
+  hosts: azure_vms
+  become: true
+  tasks:
+    - name: Apply deployment
+      command: kubectl apply -f auto-testing-api/deployment.yaml
+
+    - name: Apply configmap
+      command: kubectl apply -f auto-testing-api/configmap.yaml
+
+    - name: Apply secret
+      command: kubectl apply -f auto-testing-api/secret.yaml
+
+    - name: Apply service
+      command: kubectl apply -f auto-testing-api/service.yaml

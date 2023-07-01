@@ -8,7 +8,7 @@ spec:
      image: karantakalkar/auto-testing-api
      env:
      - name: DB_HOST
-       value: mongodb-service
+       value: mongo-service
      - name: DB_PORT
        value: "27017"
      - name: DB_USER
@@ -16,7 +16,7 @@ spec:
      - name: DB_PASS
        value: "example"
      - name: DB_NAME
-       value: "admin"
+       value: "?replicaSet=MainRepSet"
      ports:
      - containerPort: 3000
 

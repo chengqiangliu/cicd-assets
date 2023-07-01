@@ -1,0 +1,41 @@
+---
+- name: Install Minikube and kubectl on Debian Ubuntu
+  hosts: all
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install necessary packages
+      apt:
+        name: ['apt-transport-https', 'curl']
+
+    - name: Add Minikube APT key
+      apt_key:
+        url: https://minikube.sigs.k8s.io/releases/signature.asc
+        state: present
+
+    - name: Add Minikube APT repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://minikube.sigs.k8s.io/debian/{{ ansible_distribution_release }}/ stable main"
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Minikube
+      apt:
+        name: minikube
+        state: present
+
+    - name: Download kubectl
+      get_url:
+        url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+        dest: "/usr/local/bin/kubectl"
+        mode: '0755'
+        owner: root
+        group: root
+      vars:
+        kubectl_version: "v1.21.0"  # Specify the desired kubectl version
