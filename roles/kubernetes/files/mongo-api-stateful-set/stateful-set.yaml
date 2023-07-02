@@ -37,6 +37,13 @@ spec:
           volumeMounts:
             - name: mongodb-persistent-storage-claim
               mountPath: /data/db
+            - name: script-volume
+              mountPath: /scripts
+      volumes:
+        - name: script-volume
+          configMap:
+            name: mongodb-script
+            defaultMode: 0777
   volumeClaimTemplates:
   - metadata:
       name: mongodb-persistent-storage-claim

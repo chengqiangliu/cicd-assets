@@ -23,6 +23,22 @@
   k8s:
     src: /opt/services/mongo-api-stateful-set/service.yaml
 
+- name: Apply config map
+  k8s:
+    src: /opt/services/mongo-api-stateful-set/configmap.yaml
+
 - name: Apply stateful set
   k8s:
     src: /opt/services/mongo-api-stateful-set/stateful-set.yaml
+
+- name: Wait for deployment completion
+  pause:
+    seconds: 10
+
+- name: Configure stateful set
+  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 10; scripts/mongodb-script-createuser.sh'"
+  register: script_output
+
+- name: Log script output
+  debug:
+    var: script_output.stdout_lines

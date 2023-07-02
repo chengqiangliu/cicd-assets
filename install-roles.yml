@@ -1,4 +1,4 @@
-- name: Install {{ role }}
+- name: Configure {{ role }}
   hosts: azure_vms
   become: yes
   roles:
