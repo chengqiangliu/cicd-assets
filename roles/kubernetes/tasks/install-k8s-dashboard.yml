@@ -32,16 +32,9 @@
     src: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 
 - name: Generate bearer token
-  k8s:
-    src:
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: admin-user-token
-        namespace: kubernetes-dashboard
-      type: kubernetes.io/service-account-token
+  command: kubectl -n kubernetes-dashboard create token admin-user
+  register: bearer_token_output
 
 - name: Print bearer token
   debug:
-    var: bearer_token_output.stdout['data']['token'] | b64decode
-
+    var: bearer_token_output.stdout_lines[0]
