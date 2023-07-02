@@ -1,38 +1,32 @@
----
-- name: Apply Auto testing API YAML files
-  hosts: azure_vms
-  gather_facts: no
-  become: true
-  tasks:
-    - name: Create directories if they do not exist
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: '0755'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-      loop:
-        - /opt/services
-        - /opt/services/auto-testing-api
+- name: Create directories if they do not exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  loop:
+    - /opt/services
+    - /opt/services/auto-testing-api
 
-    - name: Copy files to remote server
-      copy:
-        src: "files/auto-testing-api/"
-        dest: "/opt/services/auto-testing-api"
-        mode: '0644'
+- name: Copy files to remote server
+  copy:
+    src: "files/auto-testing-api/"
+    dest: "/opt/services/auto-testing-api"
+    mode: '0644'
 
-    - name: Apply Namespace
-      k8s:
-        src: /opt/services/auto-testing-api/namespace.yaml
+- name: Apply Namespace
+  k8s:
+    src: /opt/services/auto-testing-api/namespace.yaml
 
-    - name: Apply Configmap
-      k8s:
-        src: /opt/services/auto-testing-api/configmap.yaml
+- name: Apply Configmap
+  k8s:
+    src: /opt/services/auto-testing-api/configmap.yaml
 
-    - name: Apply Deployment
-      k8s:
-        src: /opt/services/auto-testing-api/deployment.yaml
+- name: Apply Deployment
+  k8s:
+    src: /opt/services/auto-testing-api/deployment.yaml
 
-    - name: Apply Service
-      k8s:
-        src: /opt/services/auto-testing-api/service.yaml
+- name: Apply Service
+  k8s:
+    src: /opt/services/auto-testing-api/service.yaml

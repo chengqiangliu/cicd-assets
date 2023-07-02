@@ -1,10 +1,6 @@
----
-- name: Delete "mongo" Namespace
-  hosts: localhost
-  tasks:
-    - name: Delete the "mongo" namespace
-      k8s:
-        api_version: v1
-        kind: Namespace
-        name: mongo
-        state: absent
+- name: Delete the "mongo" namespace
+  k8s:
+    api_version: v1
+    kind: Namespace
+    name: mongo
+    state: absent

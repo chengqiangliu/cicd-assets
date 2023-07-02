@@ -1,10 +1,6 @@
----
-- name: Delete "kubernetes-dashboard" Namespace
-  hosts: localhost
-  tasks:
-    - name: Delete the "kubernetes-dashboard" namespace
-      k8s:
-        api_version: v1
-        kind: Namespace
-        name: kubernetes-dashboard
-        state: absent
+- name: Delete the "kubernetes-dashboard" namespace
+  k8s:
+    api_version: v1
+    kind: Namespace
+    name: kubernetes-dashboard
+    state: absent
