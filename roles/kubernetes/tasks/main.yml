@@ -1,0 +1,6 @@
+---
+# tasks file for kubernetes
+- import_tasks: "uninstall-{{ app }}.yml"
+  when: cmd == "uninstall"
+- import_tasks: "install-{{ app }}.yml"
+  when: cmd == "install"

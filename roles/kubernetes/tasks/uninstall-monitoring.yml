@@ -1,0 +1,10 @@
+---
+- name: Delete "monitoring" Namespace
+  hosts: localhost
+  tasks:
+    - name: Delete the "monitoring" namespace
+      k8s:
+        api_version: v1
+        kind: Namespace
+        name: monitoring
+        state: absent

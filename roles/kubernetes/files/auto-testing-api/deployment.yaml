@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-testing-api
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auto-testing-api
+  template:
+    metadata:
+      labels:
+        app: auto-testing-api
+      annotations:
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+        - name: auto-testing-api
+          image: karantakalkar/auto-testing-api
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-testing-api-configmap
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-testing-api-configmap
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-testing-api-configmap
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-testing-api-configmap
+                  key: DB_PASS
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-testing-api-configmap
+                  key: DB_NAME
+          ports:
+            - containerPort: 3000

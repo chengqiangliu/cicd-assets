@@ -1,0 +1,32 @@
+- name: Apply MongoDB Stateless Set
+  hosts: azure_vms
+  become: true
+  tasks:
+    - name: Create directories if they do not exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop:
+        - /opt/services
+        - /opt/services/mongo-api-stateful-set
+
+    - name: Copy files to remote server
+      copy:
+        src: "files/mongo-api-stateful-set/"
+        dest: "/opt/services/mongo-api-stateful-set"
+        mode: '0644'
+
+    - name: Apply namespace
+      k8s:
+        src: /opt/services/mongo-api-stateful-set/namespace.yaml
+
+    - name: Apply headless service
+      k8s:
+        src: /opt/services/mongo-api-stateful-set/service.yaml
+
+    - name: Apply stateful set
+      k8s:
+        src: /opt/services/mongo-api-stateful-set/stateful-set.yaml

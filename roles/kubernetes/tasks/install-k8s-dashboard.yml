@@ -1,0 +1,52 @@
+---
+- name: Install Kubernetes Dashboard
+  hosts: azure_vms
+  become: true
+  tasks:
+    - name: Create directories if they do not exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop:
+        - /opt/services
+        - /opt/services/k8s-dashboard
+
+    - name: Copy files to remote server
+      copy:
+        src: "files/k8s-dashboard/"
+        dest: "/opt/services/k8s-dashboard"
+        mode: '0644'
+
+    - name: Apply namespace
+      k8s:
+        src: /opt/services/k8s-dashboard/namespace.yaml
+
+    - name: Apply service account
+      k8s:
+        src: /opt/services/k8s-dashboard/service-account.yaml
+
+    - name: Apply cluster role binding
+      k8s:
+        src: /opt/services/k8s-dashboard/cluster-role-binding.yaml
+
+    - name: Deploy Kubernetes Dashboard
+      k8s:
+        src: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
+    - name: Generate bearer token
+      k8s:
+       src:
+         apiVersion: v1
+         kind: Secret
+         metadata:
+           name: admin-user-token
+           namespace: kubernetes-dashboard
+         type: kubernetes.io/service-account-token
+
+    - name: Print bearer token
+      debug:
+        var: bearer_token_output.stdout['data']['token'] | b64decode
+
