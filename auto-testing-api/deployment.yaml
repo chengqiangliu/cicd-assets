@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: auto-testing-api
+      annotations:
+        prometheus.io/scrape: "true"
     spec:
       containers:
         - name: auto-testing-api
