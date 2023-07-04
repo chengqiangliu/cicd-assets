@@ -1,0 +1,55 @@
+https://accenture.webhook.office.com/webhookb2/32f1b3d3-603e-45c0-9c55-cf4f5423b440@e0793d39-0939-496d-b129-198edd916feb/IncomingWebhook/d29aabc247db4ce5b9e5253079e27357/d4232cf1-95fa-4ff1-967f-d98d4ff28f23
+
+ mongo-root-username: cm9vdA==
+ mongo-root-password: ZXhhbXBsZQ==
+
+helm upgrade --install prometheus-msteams --namespace default -f config.yaml  prometheus-msteams/prometheus-msteams
+
+kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash
+
+kubectl port-forward -n monitoring svc/kube-prometheus-grafana 3000:80 --address 0.0.0.0
+kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 10443:443 --address 0.0.0.0
+kubectl port-forward -n monitoring svc/kube-prometheus-kube-prome-prometheus 9090:9090 --address 0.0.0.0
+kubectl port-forward -n monitoring svc/kube-prometheus-kube-prome-alertmanager 9093:9093 --address 0.0.0.0
+
+
+helm upgrade -i kube-prometheus prometheus-community/kube-prometheus-stack -f values.yaml
+helm history kube-prometheus
+helm rollback kube-prometheus 5
+helm upgrade kube-prometheus prometheus-community/kube-prometheus-stack  --set prometheus.service.nodePort=30000 --set prometheus.service.type=NodePort --set grafana.service.nodePort=31000 --set grafana.service.type=NodePort --set alertmanager.service.nodePort=32000 --set alertmanager.service.type=NodePort --set prometheus-node-exporter.service.nodePort=32001 --set prometheus-node-exporter.service.type=NodePort
+
+db.createUser(
+   {
+     user: "root",
+     pwd: "example",
+     roles: [ 
+       { role: "userAdminAnyDatabase", db: "admin" },
+       { role: "readWriteAnyDatabase", db: "admin" } 
+     ]
+   }
+)
+
+docker container run --env-file .env --publish 3000:3000 -d -it karantakalkar/auto-testing-api:latest
+
+rs.initiate({ _id: "MainRepSet", version: 1, 
+members: [ 
+ { _id: 0, host: "mongod-0.mongo-service.mongo.svc.cluster.local:27017" }, 
+ { _id: 1, host: "mongod-1.mongo-service.mongo.svc.cluster.local:27017" }, 
+ { _id: 2, host: "mongod-2.mongo-service.mongo.svc.cluster.local:27017" } ]});
+
+db.getSiblingDB("admin").createUser({
+       user : "root",
+       pwd  : "example",
+       roles: [ { role: "root", db: "admin" } ]
+  });
+
+
+ - name: Replica Set Status Log
+      kubernetes.core.k8s_exec:
+        namespace: mongo
+        pod: mongod-0
+        container: mongod-container
+        command: mongosh --eval 'printjson(rs.status())';
+      register: output
+
+    - debug: msg= {{ output.stdout_lines }}
