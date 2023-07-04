@@ -1,0 +1,32 @@
+pipeline {
+  agent {
+    label 'ubuntu_slave1'
+  }
+
+  parameters {
+    choice(name: 'APP', choices: ['api', 'mongo', 'kube-prometheus', 'k8s-dashboard'], description: 'Application name')
+    choice(name: 'CMD', choices: ['install', 'uninstall'], description: 'Command')
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main', url: 'https://github.com/chengqiangliu/cicd-assets.git'
+      }
+    }
+
+    stage('Ansible Playbook') {
+      steps {
+        ansiblePlaybook(
+          playbook: 'install-roles.yml',
+          inventory: 'inventory/inventory.ini',
+          extraVars: [
+            'role': 'kubernetes',
+            'cmd': "${params.CMD}",
+            'app': "${params.APP}"
+          ]
+        )
+      }
+    }
+  }
+}
