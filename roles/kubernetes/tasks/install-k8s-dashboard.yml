@@ -1,4 +1,5 @@
 - name: Create directories if they do not exist
+  # Task to create directories if they don't exist
   file:
     path: "{{ item }}"
     state: directory
@@ -6,35 +7,42 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
   loop:
-    - /opt/services
-    - /opt/services/k8s-dashboard
+    - /opt/services        # Directory path for services
+    - /opt/services/k8s-dashboard   # Directory path for k8s-dashboard
 
 - name: Copy files to remote server
+  # Task to copy files to the remote server
   copy:
-    src: "files/k8s-dashboard/"
-    dest: "/opt/services/k8s-dashboard"
-    mode: '0644'
+    src: "files/k8s-dashboard/"   # Source directory path for files
+    dest: "/opt/services/k8s-dashboard"   # Destination directory path for files
+    mode: '0644'   # File permissions
 
 - name: Apply namespace
+  # Task to apply namespace
   k8s:
-    src: /opt/services/k8s-dashboard/namespace.yaml
+    src: /opt/services/k8s-dashboard/namespace.yaml   # Path to the namespace file
 
 - name: Apply service account
+  # Task to apply service account
   k8s:
-    src: /opt/services/k8s-dashboard/service-account.yaml
+    src: /opt/services/k8s-dashboard/service-account.yaml   # Path to the service account file
 
 - name: Apply cluster role binding
+  # Task to apply cluster role binding
   k8s:
-    src: /opt/services/k8s-dashboard/cluster-role-binding.yaml
+    src: /opt/services/k8s-dashboard/cluster-role-binding.yaml   # Path to the cluster role binding file
 
 - name: Deploy Kubernetes Dashboard
+  # Task to deploy Kubernetes Dashboard
   k8s:
-    src: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    src: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml   # URL to the Kubernetes Dashboard deployment file
 
 - name: Generate bearer token
-  command: kubectl -n kubernetes-dashboard create token admin-user
-  register: bearer_token_output
+  # Task to generate a bearer token
+  command: kubectl -n kubernetes-dashboard create token admin-user   # Command to execute
+  register: bearer_token_output   # Registering the output for later use
 
 - name: Print bearer token
+  # Task to print the bearer token
   debug:
-    var: bearer_token_output.stdout_lines[0]
+    var: bearer_token_output.stdout_lines[0]   # Printing the first line of the output

@@ -1,0 +1,44 @@
+- name: Update apt cache
+  # Task to update the apt cache
+  apt:
+    update_cache: yes
+
+- name: Install necessary packages
+  # Task to install necessary packages using apt package manager
+  apt:
+    name: ['apt-transport-https', 'curl']  # List of packages to be installed
+
+- name: Add Minikube APT key
+  # Task to add the Minikube APT key
+  apt_key:
+    url: https://minikube.sigs.k8s.io/releases/signature.asc  # URL of the Minikube APT key
+    state: present
+
+- name: Add Minikube APT repository
+  # Task to add the Minikube APT repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://minikube.sigs.k8s.io/debian/{{ ansible_distribution_release }}/ stable main"  # APT repository URL
+    state: present
+
+- name: Update apt cache
+  # Task to update the apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Minikube
+  # Task to install Minikube using apt package manager
+  apt:
+    name: minikube  # Package name to install
+    state: present
+
+- name: Download kubectl
+  # Task to download kubectl binary from a URL
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"  # URL of the kubectl binary
+    dest: "/usr/local/bin/kubectl"  # Destination path to save the downloaded binary
+    mode: '0755'  # File permissions for the kubectl binary
+    owner: root  # Owner of the kubectl binary
+    group: root  # Group of the kubectl binary
+  vars:
+    kubectl_version: "v1.21.0"  # Specify the desired kubectl version
+

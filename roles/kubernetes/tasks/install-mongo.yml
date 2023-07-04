@@ -1,4 +1,5 @@
 - name: Create directories if they do not exist
+  # Task to create directories if they don't exist
   file:
     path: "{{ item }}"
     state: directory
@@ -6,39 +7,47 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
   loop:
-    - /opt/services
-    - /opt/services/mongo-api-stateful-set
+    - /opt/services   # Directory path for services
+    - /opt/services/mongo-api-stateful-set   # Directory path for mongo-api-stateful-set
 
 - name: Copy files to remote server
+  # Task to copy files to the remote server
   copy:
-    src: "files/mongo-api-stateful-set/"
-    dest: "/opt/services/mongo-api-stateful-set"
-    mode: '0644'
+    src: "files/mongo-api-stateful-set/"   # Source directory path for files
+    dest: "/opt/services/mongo-api-stateful-set"   # Destination directory path for files
+    mode: '0644'   # File permissions
 
 - name: Apply namespace
+  # Task to apply namespace
   k8s:
-    src: /opt/services/mongo-api-stateful-set/namespace.yaml
+    src: /opt/services/mongo-api-stateful-set/namespace.yaml   # Path to the namespace file
 
 - name: Apply headless service
+  # Task to apply headless service
   k8s:
-    src: /opt/services/mongo-api-stateful-set/service.yaml
+    src: /opt/services/mongo-api-stateful-set/service.yaml   # Path to the headless service file
 
 - name: Apply config map
+  # Task to apply config map
   k8s:
-    src: /opt/services/mongo-api-stateful-set/configmap.yaml
+    src: /opt/services/mongo-api-stateful-set/configmap.yaml   # Path to the config map file
 
 - name: Apply stateful set
+  # Task to apply stateful set
   k8s:
-    src: /opt/services/mongo-api-stateful-set/stateful-set.yaml
+    src: /opt/services/mongo-api-stateful-set/stateful-set.yaml   # Path to the stateful set file
 
 - name: Wait for deployment completion
+  # Task to pause execution for a specific duration
   pause:
-    seconds: 30
+    seconds: 10   # Number of seconds to pause execution
 
 - name: Configure stateful set
-  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 30; scripts/mongodb-script-createuser.sh'"
-  register: script_output
+  # Task to configure the stateful set
+  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 20; scripts/mongodb-script-createuser.sh'"   # Command to execute
+  register: script_output   # Registering the output for later use
 
 - name: Log script output
+  # Task to log the script output
   debug:
-    var: script_output.stdout_lines
+    var: script_output.stdout_lines   # Printing the script output

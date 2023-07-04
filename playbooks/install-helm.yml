@@ -1,0 +1,29 @@
+- name: Install required packages
+  # Task to install required packages using apt package manager
+  apt:
+    name: ['curl', 'tar']  # List of packages to be installed
+
+- name: Download Helm
+  # Task to download Helm binary from a URL
+  get_url:
+    url: "https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz"  # URL of the Helm binary
+    dest: "/tmp/helm.tar.gz"  # Destination path to save the downloaded file
+
+- name: Extract Helm
+  # Task to extract the Helm binary from the downloaded tarball
+  ansible.builtin.unarchive:
+    src: "/tmp/helm.tar.gz"  # Path to the downloaded tarball
+    dest: "/tmp"  # Destination path to extract the contents
+
+- name: Move Helm binary to /usr/local/bin
+  # Task to move the Helm binary to the system-wide binary directory
+  ansible.builtin.copy:
+    src: "/tmp/linux-amd64/helm"  # Source path of the Helm binary
+    dest: "/usr/local/bin/helm"  # Destination path to move the Helm binary
+    mode: '0755'  # File permissions for the Helm binary
+    owner: root  # Owner of the Helm binary
+    group: root  # Group of the Helm binary
+
+- name: Verify Helm installation
+  # Task to verify the Helm installation by checking the version
+  command: helm version  # Command to execute

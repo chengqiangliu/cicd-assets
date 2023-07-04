@@ -1,38 +1,48 @@
 ---
-    - name: Create directories if they do not exist
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: '0755'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-      loop:
-        - /opt/services
-        - /opt/services/monitoring-stack
+- name: Create directories if they do not exist
+  # Task to create directories if they don't exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  loop:
+    - /opt/services        # Directory path for services
+    - /opt/services/monitoring-stack   # Directory path for monitoring-stack
 
-    - name: Copy files to remote server
-      copy:
-        src: "/home/cicd/workspace/cicd-assets/teams-webhook/"
-        dest: "/opt/services/monitoring-stack"
-        mode: '0644'
+- name: Copy files to remote server
+  # Task to copy files to the remote server
+  copy:
+    src: "/home/cicd/workspace/cicd-assets/teams-webhook/"   # Source directory path for files
+    dest: "/opt/services/monitoring-stack"   # Destination directory path for files
+    mode: '0644'   # File permissions
 
-    - name: Create monitoring namespace
-      command: kubectl create namespace monitoring
-      ignore_errors: true
+- name: Create monitoring namespace
+  # Task to create the monitoring namespace
+  command: kubectl create namespace monitoring   # Command to create the namespace
+  ignore_errors: true   # Ignoring errors if the namespace already exists
 
-    - name: Add prometheus-community Helm repository
-      command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-      ignore_errors: true
+- name: Add prometheus-community Helm repository
+  # Task to add the prometheus-community Helm repository
+  command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts   # Command to add the repository
+  ignore_errors: true   # Ignoring errors if the repository is already added
 
-    - name: Add prometheus-msteams Helm repository
-      command: helm repo add prometheus-msteams https://prometheus-msteams.github.io/helm-charts
-      ignore_errors: true
+- name: Add prometheus-msteams Helm repository
+  # Task to add the prometheus-msteams Helm repository
+  command: helm repo add prometheus-msteams https://prometheus-msteams.github.io/helm-charts   # Command to add the repository
+  ignore_errors: true   # Ignoring errors if the repository is already added
 
-    - name: Update Helm repositories
-      command: helm repo update
+- name: Update Helm repositories
+  # Task to update Helm repositories
+  command: helm repo update   # Command to update the repositories
 
-    - name: Install kube-prometheus-stack
-      command: helm upgrade -i kube-prometheus prometheus-community/kube-prometheus-stack -n monitoring -f /opt/services/monitoring-stack/values.yaml
+- name: Install kube-prometheus-stack
+  # Task to install kube-prometheus-stack using Helm
+  command: helm upgrade -i kube-prometheus prometheus-community/kube-prometheus-stack -n monitoring -f /opt/services/monitoring-stack/values.yaml   # Command to install the chart
+  ignore_errors: true   # Ignoring errors if the release is already installed
 
-    - name: Install prometheus-msteams
-      command: helm upgrade --install prometheus-msteams --namespace monitoring -f /opt/services/monitoring-stack/config.yaml prometheus-msteams/prometheus-msteams
+- name: Install prometheus-msteams
+  # Task to install prometheus-msteams using Helm
+  command: helm upgrade --install prometheus-msteams --namespace monitoring -f /opt/services/monitoring-stack/config.yaml prometheus-msteams/prometheus-msteams   # Command to install the chart
+  ignore_errors: true   # Ignoring errors if the release is already installed

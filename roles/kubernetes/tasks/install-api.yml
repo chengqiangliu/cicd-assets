@@ -1,4 +1,5 @@
 - name: Create directories if they do not exist
+  # Task to create directories if they don't exist
   file:
     path: "{{ item }}"
     state: directory
@@ -6,27 +7,32 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
   loop:
-    - /opt/services
-    - /opt/services/auto-testing-api
+    - /opt/services        # Directory path for services
+    - /opt/services/auto-testing-api   # Directory path for auto-testing-api
 
 - name: Copy files to remote server
+  # Task to copy files to the remote server
   copy:
-    src: "files/auto-testing-api/"
-    dest: "/opt/services/auto-testing-api"
-    mode: '0644'
+    src: "files/auto-testing-api/"   # Source directory path for files
+    dest: "/opt/services/auto-testing-api"   # Destination directory path for files
+    mode: '0644'   # File permissions
 
 - name: Apply Namespace
+  # Task to apply Namespace
   k8s:
-    src: /opt/services/auto-testing-api/namespace.yaml
+    src: /opt/services/auto-testing-api/namespace.yaml   # Path to the Namespace file
 
 - name: Apply Configmap
+  # Task to apply Configmap
   k8s:
-    src: /opt/services/auto-testing-api/configmap.yaml
+    src: /opt/services/auto-testing-api/configmap.yaml   # Path to the Configmap file
 
 - name: Apply Deployment
+  # Task to apply Deployment
   k8s:
-    src: /opt/services/auto-testing-api/deployment.yaml
+    src: /opt/services/auto-testing-api/deployment.yaml   # Path to the Deployment file
 
 - name: Apply Service
+  # Task to apply Service
   k8s:
-    src: /opt/services/auto-testing-api/service.yaml
+    src: /opt/services/auto-testing-api/service.yaml   # Path to the Service file
