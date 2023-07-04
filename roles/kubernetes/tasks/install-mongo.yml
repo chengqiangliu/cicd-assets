@@ -33,10 +33,10 @@
 
 - name: Wait for deployment completion
   pause:
-    seconds: 10
+    seconds: 30
 
 - name: Configure stateful set
-  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 10; scripts/mongodb-script-createuser.sh'"
+  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 30; scripts/mongodb-script-createuser.sh'"
   register: script_output
 
 - name: Log script output
