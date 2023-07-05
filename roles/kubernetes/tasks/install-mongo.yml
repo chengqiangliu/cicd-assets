@@ -40,11 +40,11 @@
 - name: Wait for deployment completion
   # Task to pause execution for a specific duration
   pause:
-    seconds: 10   # Number of seconds to pause execution
+    seconds: 30   # Number of seconds to pause execution
 
 - name: Configure stateful set
   # Task to configure the stateful set
-  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 20; scripts/mongodb-script-createuser.sh'"   # Command to execute
+  command: "kubectl exec -it -n mongo mongod-0 -c mongod-container -- bash -c 'scripts/mongodb-script-initiate.sh; sleep 30; scripts/mongodb-script-createuser.sh'"   # Command to execute
   register: script_output   # Registering the output for later use
 
 - name: Log script output
