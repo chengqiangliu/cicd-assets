@@ -14,7 +14,7 @@
 - name: Copy files to remote server
   # Task to copy files to the remote server
   copy:
-    src: "/home/cicd/workspace/cicd-assets/teams-webhook/"   # Source directory path for files
+    src: "files/teams-webhook/"   # Source directory path for files
     dest: "/opt/services/monitoring-stack"   # Destination directory path for files
     mode: '0644'   # File permissions
 
