@@ -35,7 +35,7 @@
 - name: Deploy Kubernetes Dashboard
   # Task to deploy Kubernetes Dashboard
   k8s:
-    src: https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml   # URL to the Kubernetes Dashboard deployment file
+    src: /opt/services/k8s-dashboard/deployment.yaml   # URL to the Kubernetes Dashboard deployment file
 
 - name: Generate bearer token
   # Task to generate a bearer token
