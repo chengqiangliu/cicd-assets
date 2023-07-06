@@ -1,2 +1,7 @@
 - name: Scale up/down the deployment
   command: kubectl scale deploy -n api auto-testing-api --replicas={{ new_replica_count }}
+  register: scale_output
+
+- name: Display scale output
+  debug:
+    var: scale_output.stdout_lines
