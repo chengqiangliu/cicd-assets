@@ -1,5 +1,15 @@
 - name: Annotate deployment with change cause
   command: kubectl annotate -n api deployment.apps/auto-testing-api change-cause="{{ change_cause }}"
+  register: annotate_output
+
+- name: Display annotation output
+  debug:
+    var: annotate_output.stdout_lines
 
 - name: Wait for rollout to complete
   command: kubectl rollout status -n api deployment.apps/auto-testing-api
+  register: rollout_output
+
+- name: Display rollout output
+  debug:
+    var: rollout_output.stdout_lines
