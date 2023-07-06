@@ -18,14 +18,18 @@ pipeline {
     stage('Ansible Playbook') {
       steps {
         script {
+          def repc
+          def revn
+          def cc
+          
           if (params.CMD == 'rollout') {
-            input(message: 'Enter the Change Cause:', parameters: [string(defaultValue: '', description: 'Change cause for rollout command', name: 'change_cause')])
+            cc = input(message: 'Enter the Change Cause:', parameters: [string(defaultValue: '', description: 'Change cause for rollout command', name: 'change_cause')])
           }
           if (params.CMD == 'rollback') {
-            input(message: 'Enter the Rollback Revision:', parameters: [string(defaultValue: '', description: 'Revision number for rollback command', name: 'rollback_revision')])
+            revn = input(message: 'Enter the Rollback Revision:', parameters: [string(defaultValue: '', description: 'Revision number for rollback command', name: 'rollback_revision', trim: true)])
           }
           if (params.CMD == 'scale') {
-            input(message: 'Enter the New Replica Count:', parameters: [string(defaultValue: '', description: 'Replica count for scale command', name: 'new_replica_count')])
+            repc = input(message: 'Enter the New Replica Count:', parameters: [string(defaultValue: '', description: 'Replica count for scale command', name: 'new_replica_count')])
           }
 
           ansiblePlaybook(
@@ -35,9 +39,9 @@ pipeline {
               'role': 'kubernetes',
               'cmd': params.CMD,
               'app': params.APP,
-              'change_cause': params.change_cause,
-              'rollback_revision': params.rollback_revision,
-              'new_replica_count': params.new_replica_count
+              'change_cause': cc,
+              'rollback_revision': revn,
+              'new_replica_count': repc
             ]
           )
         }
