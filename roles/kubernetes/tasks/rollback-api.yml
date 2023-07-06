@@ -1,2 +1,2 @@
 - name: Rollback the deployment to a specific revision
-  command: kubectl rollout undo deployment.apps/auto-testing-api --to-revision={{ rollback_revision }}
+  command: kubectl rollout undo -n api deployment.apps/auto-testing-api --to-revision={{ rollback_revision }}
