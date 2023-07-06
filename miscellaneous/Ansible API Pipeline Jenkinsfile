@@ -6,9 +6,9 @@ pipeline {
   parameters {
     choice(name: 'APP', choices: ['api', 'mongo', 'kube-prometheus', 'k8s-dashboard'], description: 'Application name')
     choice(name: 'CMD', choices: ['install', 'uninstall', 'rollout', 'rollback', 'scale', 'history'], description: 'Command')
-    string(name: 'change_cause', defaultValue: '', description: 'Change cause for rollout command', visibilityCondition: "CMD == 'rollout'")
-    string(name: 'rollback_revision', defaultValue: '', description: 'Revision number for rollback command', visibilityCondition: "CMD == 'rollback'")
-    string(name: 'new_replica_count', defaultValue: '', description: 'Replica count for scale command', visibilityCondition: "CMD == 'scale'")
+    string(name: 'change_cause', defaultValue: '', description: 'Change cause for rollout command')
+    string(name: 'rollback_revision', defaultValue: '', description: 'Revision number for rollback command')
+    string(name: 'new_replica_count', defaultValue: '', description: 'Replica count for scale command')
   }
 
   stages {
@@ -20,18 +20,30 @@ pipeline {
 
     stage('Ansible Playbook') {
       steps {
-        ansiblePlaybook(
-          playbook: 'install-roles.yml',
-          inventory: 'inventory/inventory.ini',
-          extraVars: [
-            'role': 'kubernetes',
-            'cmd': "${params.CMD}",
-            'app': "${params.APP}",
-            'change_cause': "${params.change_cause}",
-            'rollback_revision': "${params.rollback_revision}",
-            'new_replica_count': "${params.new_replica_count}"
-          ]
-        )
+        script {
+          if (params.CMD == 'rollout') {
+            input(message: 'Enter the Change Cause:', parameters: [string(defaultValue: '', description: 'Change cause for rollout command', name: 'change_cause')])
+          }
+          if (params.CMD == 'rollback') {
+            input(message: 'Enter the Rollback Revision:', parameters: [string(defaultValue: '', description: 'Revision number for rollback command', name: 'rollback_revision')])
+          }
+          if (params.CMD == 'scale') {
+            input(message: 'Enter the New Replica Count:', parameters: [string(defaultValue: '', description: 'Replica count for scale command', name: 'new_replica_count')])
+          }
+
+          ansiblePlaybook(
+            playbook: 'install-roles.yml',
+            inventory: 'inventory/inventory.ini',
+            extraVars: [
+              'role': 'kubernetes',
+              'cmd': params.CMD,
+              'app': params.APP,
+              'change_cause': params.change_cause,
+              'rollback_revision': params.rollback_revision,
+              'new_replica_count': params.new_replica_count
+            ]
+          )
+        }
       }
     }
   }
