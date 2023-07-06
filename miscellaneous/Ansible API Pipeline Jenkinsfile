@@ -5,7 +5,10 @@ pipeline {
 
   parameters {
     choice(name: 'APP', choices: ['api', 'mongo', 'kube-prometheus', 'k8s-dashboard'], description: 'Application name')
-    choice(name: 'CMD', choices: ['install', 'uninstall'], description: 'Command')
+    choice(name: 'CMD', choices: ['install', 'uninstall', 'rollout', 'rollback', 'scale', 'history'], description: 'Command')
+    string(name: 'change_cause', defaultValue: '', description: 'Change cause for rollout command', visibilityCondition: "CMD == 'rollout'")
+    string(name: 'rollback_revision', defaultValue: '', description: 'Revision number for rollback command', visibilityCondition: "CMD == 'rollback'")
+    string(name: 'new_replica_count', defaultValue: '', description: 'Replica count for scale command', visibilityCondition: "CMD == 'scale'")
   }
 
   stages {
@@ -23,7 +26,10 @@ pipeline {
           extraVars: [
             'role': 'kubernetes',
             'cmd': "${params.CMD}",
-            'app': "${params.APP}"
+            'app': "${params.APP}",
+            'change_cause': "${params.change_cause}",
+            'rollback_revision': "${params.rollback_revision}",
+            'new_replica_count': "${params.new_replica_count}"
           ]
         )
       }
