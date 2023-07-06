@@ -1,0 +1,7 @@
+- name: Print rollout history
+  command: kubectl rollout history -n api deployment.apps/auto-testing-api
+  register: rollout_history_result
+
+- name: Print rollout history result
+  debug:
+    var: rollout_history_result

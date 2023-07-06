@@ -1,0 +1,2 @@
+- name: Scale up/down the deployment
+  command: kubectl scale deploy -n api auto-testing-api --replicas={{ new_replica_count }}
